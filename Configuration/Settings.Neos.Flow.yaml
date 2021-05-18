@@ -1,0 +1,8 @@
+Neos:
+  Flow:
+    security:
+      authentication:
+        providers:
+          'rememberMeProvider':
+            provider: CRON\RememberMe\Security\Authentication\RememberMeProvider
+            token: CRON\RememberMe\Security\Authentication\Token\RememberMe
