@@ -2,7 +2,6 @@
   "description": "This Package provided functionality for the remember-me login functionality.",
   "name": "cron/neos-rememberme",
   "type": "neos-package",
-  "version": "1",
   "license": "proprietary",
   "require": {
     "neos/flow": "^5.3",
