@@ -1,0 +1,22 @@
+{
+  "description": "This Package provided functionality for the remember-me login functionality.",
+  "name": "cron/neos-rememberme",
+  "type": "neos-package",
+  "version": "1",
+  "license": "proprietary",
+  "require": {
+    "neos/flow": "^5.3",
+    "neos/neos": "^4.3",
+    "firebase/php-jwt": "^5.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "CRON\\RememberMe\\": "Classes"
+    }
+  },
+  "extra": {
+    "neos": {
+      "package-key": "CRON.RememberMe"
+    }
+  }
+}
