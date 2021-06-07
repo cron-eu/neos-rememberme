@@ -7,6 +7,7 @@ use Firebase\JWT\JWT as JwtService;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -35,6 +36,13 @@ class AuthenticationEventsHandler
     protected $objectManager;
 
     /**
+     * jwt cookie to be send in the `handleHTTPResponse` hook
+     *
+     * @var Cookie
+     */
+    private $jwtCookie = null;
+
+    /**
      * expire JWT cookie when the user logs out
      */
     public function loggedOut(Bootstrap $bootstrap): void
@@ -51,16 +59,12 @@ class AuthenticationEventsHandler
     }
 
     /**
+     * See Package.php
+     *
      * @param TokenInterface $token
      */
-    public function authenticatedToken(TokenInterface $token, Bootstrap $bootstrap): void
+    public function authenticatedToken(TokenInterface $token): void
     {
-        $requestHandler = $bootstrap->getActiveRequestHandler();
-        // not a HTTP request handler? => none of our business
-        if (!$requestHandler instanceof HttpRequestHandlerInterface) {
-            return;
-        }
-
         $credentials = $token->getCredentials();
 
         if (isset($credentials['rememberMe']) && $credentials['rememberMe']) {
@@ -77,9 +81,21 @@ class AuthenticationEventsHandler
             // Don't be surprised by the hard-coded "jwt". That is *not* the secret key of the JWT. HashService::generateHmac() uses the encryption key of this installation
             $jwtKey = $this->hashService->generateHmac('jwt');
             $jwt = JwtService::encode($jwtPayload, $jwtKey, 'HS256');
-            $jwtCookie = new Cookie($this->cookie['name'], $jwt, $jwtExpiration);
-            $requestHandler->getHttpResponse()->setCookie($jwtCookie);
-            return;
+            $this->jwtCookie = new Cookie($this->cookie['name'], $jwt, $jwtExpiration);
+            // the cookie will be set via the `handleHTTPResponse` hook later on
         }
     }
+
+    /**
+     * Inject the jwt cookie into the current http response if needed
+     *
+     * @param $response
+     */
+    public function handleHTTPResponse($response): void
+    {
+        if ($this->jwtCookie !== null && $response instanceof ActionResponse) {
+            $response->getHeaders()->setCookie($this->jwtCookie);
+        }
+    }
+
 }
