@@ -3,7 +3,7 @@ CRON:
     # Cookie name and lifetime
     cookie:
       name: 'remember-me'
-      lifetime: 86400
+      lifetime: 2592000
     # Form field names for the login form including the remember-me checkbox,
     # used in CRON\RememberMe\Security\Authentication\Token\UsernamePasswordWithRememberMe.php.
     # Configure to use that token with your authentication provider.
