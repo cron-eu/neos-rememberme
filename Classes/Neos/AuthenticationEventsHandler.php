@@ -8,6 +8,9 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\ControllerInterface;
+use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -45,17 +48,10 @@ class AuthenticationEventsHandler
     /**
      * expire JWT cookie when the user logs out
      */
-    public function loggedOut(Bootstrap $bootstrap): void
+    public function loggedOut(): void
     {
-        $requestHandler = $bootstrap->getActiveRequestHandler();
-        // not a HTTP request handler? => none of our business
-        if (!$requestHandler instanceof HttpRequestHandlerInterface) {
-            return;
-        }
-
-        $jwtCookie = new Cookie($this->cookie['name']);
-        $jwtCookie->expire();
-        $requestHandler->getHttpResponse()->setCookie($jwtCookie);
+        $this->jwtCookie = new Cookie($this->cookie['name']);
+        $this->jwtCookie->expire();
     }
 
     /**
@@ -88,10 +84,11 @@ class AuthenticationEventsHandler
 
     /**
      * Inject the jwt cookie into the current http response if needed
-     *
-     * @param $response
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @param ControllerInterface $controller
      */
-    public function handleHTTPResponse($response): void
+    public function handleHTTPResponse(RequestInterface $request, ResponseInterface $response, ControllerInterface $controller): void
     {
         if ($this->jwtCookie !== null && $response instanceof ActionResponse) {
             $response->getHeaders()->setCookie($this->jwtCookie);

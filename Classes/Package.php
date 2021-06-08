@@ -31,27 +31,23 @@ class Package extends BasePackage
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $dispatcher->connect(
-            AuthenticationProviderManager::class, 'loggedOut',
-            function() use ($bootstrap) {
-                $authenticationEventsHandler = $bootstrap->getObjectManager()->get(AuthenticationEventsHandler::class);
-                $authenticationEventsHandler->loggedOut($bootstrap);
-            }
+            AuthenticationProviderManager::class,
+            'loggedOut',
+            AuthenticationEventsHandler::class,
+            'loggedOut'
         );
 
         $dispatcher->connect(
-            AuthenticationProviderManager::class, 'authenticatedToken',
-            function(TokenInterface $token) use ($bootstrap) {
-                $authenticationEventsHandler = $bootstrap->getObjectManager()->get(AuthenticationEventsHandler::class);
-                $authenticationEventsHandler->authenticatedToken($token);
-            }
+            AuthenticationProviderManager::class,
+            'authenticatedToken',
+            AuthenticationEventsHandler::class,
+            'authenticatedToken'
         );
 
-        $dispatcher->connect(Dispatcher::class, 'afterControllerInvocation',
-            function(RequestInterface $request, ResponseInterface $response, ControllerInterface $controller) use ($bootstrap) {
-                /** @var AuthenticationEventsHandler $authenticationEventsHandler */
-                $authenticationEventsHandler = $bootstrap->getObjectManager()->get(AuthenticationEventsHandler::class);
-                $authenticationEventsHandler->handleHTTPResponse($response);
-            }
+        $dispatcher->connect(Dispatcher::class,
+            'afterControllerInvocation',
+            AuthenticationEventsHandler::class,
+            'handleHTTPResponse'
         );
 
     }
