@@ -5,6 +5,10 @@ namespace CRON\RememberMe;
 use Neos\Flow\Annotations as Flow;
 use CRON\RememberMe\Neos\AuthenticationEventsHandler;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Mvc\Controller\ControllerInterface;
+use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
@@ -38,8 +42,17 @@ class Package extends BasePackage
             AuthenticationProviderManager::class, 'authenticatedToken',
             function(TokenInterface $token) use ($bootstrap) {
                 $authenticationEventsHandler = $bootstrap->getObjectManager()->get(AuthenticationEventsHandler::class);
-                $authenticationEventsHandler->authenticatedToken($token, $bootstrap);
+                $authenticationEventsHandler->authenticatedToken($token);
             }
         );
+
+        $dispatcher->connect(Dispatcher::class, 'afterControllerInvocation',
+            function(RequestInterface $request, ResponseInterface $response, ControllerInterface $controller) use ($bootstrap) {
+                /** @var AuthenticationEventsHandler $authenticationEventsHandler */
+                $authenticationEventsHandler = $bootstrap->getObjectManager()->get(AuthenticationEventsHandler::class);
+                $authenticationEventsHandler->handleHTTPResponse($response);
+            }
+        );
+
     }
 }
