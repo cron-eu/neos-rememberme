@@ -5,12 +5,12 @@ namespace CRON\RememberMe\Security\Authentication\Token;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
-use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+use Neos\Flow\Session\SessionManagerInterface;
 
 /**
  * An authentication token used to fetch JWT credentials from a cookie
  */
-class RememberMe extends AbstractToken implements SessionlessTokenInterface
+class RememberMe extends AbstractToken
 {
 
     /**
@@ -18,6 +18,12 @@ class RememberMe extends AbstractToken implements SessionlessTokenInterface
      * @var array
      */
     protected $cookie;
+
+    /**
+     * @var SessionManagerInterface
+     * @Flow\Inject
+     */
+    protected $sessionManager;
 
     /**
      * The jwt credentials
@@ -29,14 +35,20 @@ class RememberMe extends AbstractToken implements SessionlessTokenInterface
 
     /**
      * @param ActionRequest $actionRequest The current action request
-     * @return void
+     * @return boolean
+     * @throws \Neos\Flow\Security\Exception\InvalidAuthenticationStatusException
      */
     public function updateCredentials(ActionRequest $actionRequest)
     {
         $jwtCookie = $actionRequest->getHttpRequest()->getCookie($this->cookie['name']);
         if ($jwtCookie === null) {
-            return;
+            return false;
         }
+
+        if ($this->sessionManager->getCurrentSession()->isStarted()) {
+            return false;
+        }
+
         $this->credentials['jwt'] = $jwtCookie->getValue();
         $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
     }
