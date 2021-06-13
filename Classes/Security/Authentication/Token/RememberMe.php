@@ -5,7 +5,6 @@ namespace CRON\RememberMe\Security\Authentication\Token;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
-use Neos\Flow\Session\SessionManagerInterface;
 
 /**
  * An authentication token used to fetch JWT credentials from a cookie
@@ -18,12 +17,6 @@ class RememberMe extends AbstractToken
      * @var array
      */
     protected $cookie;
-
-    /**
-     * @var SessionManagerInterface
-     * @Flow\Inject
-     */
-    protected $sessionManager;
 
     /**
      * The jwt credentials
@@ -41,16 +34,18 @@ class RememberMe extends AbstractToken
     public function updateCredentials(ActionRequest $actionRequest)
     {
         $jwtCookie = $actionRequest->getHttpRequest()->getCookie($this->cookie['name']);
-        if ($jwtCookie === null) {
+        if ($jwtCookie === null || empty($jwtCookie->getValue())) {
+            $this->setAuthenticationStatus(self::NO_CREDENTIALS_GIVEN);
             return false;
         }
 
-        if ($this->sessionManager->getCurrentSession()->isStarted()) {
-            return false;
+        // only mark this token if it hasn't been successfully authenticated yet.
+        // this will avoid re-authentication with every request.
+        // Flow keeps this token with status AUTHENTICATION_SUCCESSFUL in the session after successful authentication.
+        if ($this->getAuthenticationStatus() !== self::AUTHENTICATION_SUCCESSFUL) {
+            $this->credentials['jwt'] = $jwtCookie->getValue();
+            $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
         }
-
-        $this->credentials['jwt'] = $jwtCookie->getValue();
-        $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
     }
 
     /**
