@@ -3,6 +3,11 @@ Neos:
     security:
       authentication:
         providers:
-          'rememberMeProvider':
+          'RememberMeAuthenticationProvider':
             provider: CRON\RememberMe\Security\Authentication\RememberMeProvider
             token: CRON\RememberMe\Security\Authentication\Token\RememberMe
+            requestPatterns:
+              'CRON.RememberMe:NeosFrontend':
+                pattern: CRON\RememberMe\Security\Authentication\NeosRequestPattern
+                patternOptions:
+                  matchFrontend: true
