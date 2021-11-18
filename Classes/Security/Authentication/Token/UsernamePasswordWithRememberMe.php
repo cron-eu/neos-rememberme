@@ -55,20 +55,24 @@ class UsernamePasswordWithRememberMe extends AbstractToken
 
         $arguments = $parentRequest->getArguments();
 
-        if (empty($this->settings['loginFormFields']['username']) || empty($this->settings['loginFormFields']['password'])) {
-            throw new \Neos\Flow\Configuration\Exception('You need to configure both username and password fields in CRON.RememberMe.loginFormFields');
+        foreach ($this->settings['loginFormFields'] as $loginFormFieldsSetting) {
+            if (empty($loginFormFieldsSetting['usaername']) || empty($loginFormFieldsSetting['password'])) {
+                throw new \Neos\Flow\Configuration\Exception('You need to configure both username and password fields in every entry of CRON.RememberMe.loginFormFields');
+            }
+
+            $username = trim(ObjectAccess::getPropertyPath($arguments, $loginFormFieldsSetting['username']));
+            $password = ObjectAccess::getPropertyPath($arguments, $loginFormFieldsSetting['password']);
+            $rememberMe = !empty($loginFormFieldsSetting['rememberMe']) ? ObjectAccess::getPropertyPath($arguments, $loginFormFieldsSetting['rememberMe']) : null;
+
+            if (!empty($username) && !empty($password)) {
+                $this->credentials['username'] = $username;
+                $this->credentials['password'] = $password;
+                $this->credentials['rememberMe'] = $rememberMe;
+                $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
+                break;
+            }
         }
 
-        $username = trim(ObjectAccess::getPropertyPath($arguments, $this->settings['loginFormFields']['username']));
-        $password = ObjectAccess::getPropertyPath($arguments, $this->settings['loginFormFields']['password']);
-        $rememberMe = ObjectAccess::getPropertyPath($arguments, $this->settings['loginFormFields']['rememberMe']);
-
-        if (!empty($username) && !empty($password)) {
-            $this->credentials['username'] = $username;
-            $this->credentials['password'] = $password;
-            $this->credentials['rememberMe'] = $rememberMe;
-            $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
-        }
         return true;
     }
 
