@@ -56,7 +56,7 @@ class UsernamePasswordWithRememberMe extends AbstractToken
         $arguments = $parentRequest->getArguments();
 
         foreach ($this->settings['loginFormFields'] as $loginFormFieldsSetting) {
-            if (empty($loginFormFieldsSetting['usaername']) || empty($loginFormFieldsSetting['password'])) {
+            if (empty($loginFormFieldsSetting['username']) || empty($loginFormFieldsSetting['password'])) {
                 throw new \Neos\Flow\Configuration\Exception('You need to configure both username and password fields in every entry of CRON.RememberMe.loginFormFields');
             }
 
