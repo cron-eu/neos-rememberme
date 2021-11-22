@@ -8,8 +8,9 @@ CRON:
     # used in CRON\RememberMe\Security\Authentication\Token\UsernamePasswordWithRememberMe.php.
     # Configure to use that token with your authentication provider.
     loginFormFields:
-      username: '__authentication.CRON.RememberMe.Security.Authentication.Token.UsernamePasswordWithRememberMe.username'
-      password: '__authentication.CRON.RememberMe.Security.Authentication.Token.UsernamePasswordWithRememberMe.password'
-      rememberMe: '__authentication.CRON.RememberMe.Security.Authentication.Token.UsernamePasswordWithRememberMe.rememberMe'
+      default:
+        username: '__authentication.CRON.RememberMe.Security.Authentication.Token.UsernamePasswordWithRememberMe.username'
+        password: '__authentication.CRON.RememberMe.Security.Authentication.Token.UsernamePasswordWithRememberMe.password'
+        rememberMe: '__authentication.CRON.RememberMe.Security.Authentication.Token.UsernamePasswordWithRememberMe.rememberMe'
     # Class name implementing RememberMeAuthenticationProcessorInterface. See interface for more information.
     rememberMeAuthenticationProcessorClassName: 'CRON\RememberMe\Security\Authentication\RememberMeAuthenticationProcessor'
