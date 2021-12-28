@@ -33,15 +33,11 @@ class NeosRequestPattern implements RequestPatternInterface
     /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against its set pattern rules
      *
-     * @param RequestInterface $request The request that should be matched
-     * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @param ActionRequest $request The request that should be matched
+     * @return bool TRUE if the pattern matched, FALSE otherwise
      */
-    public function matchRequest(RequestInterface $request)
+    public function matchRequest(ActionRequest $request): bool
     {
-        if (!$request instanceof ActionRequest) {
-            return false;
-        }
-
         $shouldMatchFrontend = isset($this->options['matchFrontend']) && $this->options['matchFrontend'] === true;
         $requestPath = $request->getHttpRequest()->getUri()->getPath();
         $requestPathMatchesBackend = strpos($requestPath, '/neos') === 0 || strpos($requestPath, '@') !== false;

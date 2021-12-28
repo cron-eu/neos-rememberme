@@ -3,7 +3,6 @@
 namespace CRON\RememberMe\Security\Authentication\Token;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
@@ -49,7 +48,7 @@ class UsernamePasswordWithRememberMe extends AbstractToken
             return false;
         }
         $parentRequest = $referringRequest->getParentRequest();
-        if (!$parentRequest instanceof ActionRequest && !$parentRequest instanceof HttpRequest) {
+        if (!$parentRequest instanceof ActionRequest) {
             return false;
         }
 

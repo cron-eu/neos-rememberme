@@ -85,14 +85,13 @@ class AuthenticationEventsHandler
     /**
      * Inject the jwt cookie into the current http response if needed
      * @param RequestInterface $request
-     * @param ResponseInterface $response
+     * @param ActionResponse $response
      * @param ControllerInterface $controller
      */
-    public function handleHTTPResponse(RequestInterface $request, ResponseInterface $response, ControllerInterface $controller): void
+    public function handleHTTPResponse(RequestInterface $request, ActionResponse $response, ControllerInterface $controller): void
     {
-        if ($this->jwtCookie !== null && $response instanceof ActionResponse) {
-            $response->getHeaders()->setCookie($this->jwtCookie);
+        if ($this->jwtCookie !== null) {
+            $response->setCookie($this->jwtCookie);
         }
     }
-
 }
