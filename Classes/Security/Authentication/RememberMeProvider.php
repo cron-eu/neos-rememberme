@@ -5,7 +5,7 @@ namespace CRON\RememberMe\Security\Authentication;
 use Neos\Flow\Annotations as Flow;
 use CRON\RememberMe\Security\Authentication\Token\RememberMe;
 use Firebase\JWT\JWT as JwtService;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\Provider\AbstractProvider;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -27,10 +27,17 @@ class RememberMeProvider extends AbstractProvider
     protected $hashService;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var ThrowableStorageInterface
      */
-    protected $systemLogger;
+    private $throwableStorage;
+
+    /**
+     * @param ThrowableStorageInterface $throwableStorage
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
 
     /**
      * @Flow\InjectConfiguration(path="rememberMeAuthenticationProcessorClassName")
@@ -83,7 +90,7 @@ class RememberMeProvider extends AbstractProvider
         try {
             $jwtPayload = (array)JwtService::decode($credentials['jwt'], $jwtKey, ['HS256']);
         } catch (\Exception $exception) {
-            $this->systemLogger->logException($exception);
+            $this->throwableStorage->logThrowable($exception);
             $token->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
             return;
         }
