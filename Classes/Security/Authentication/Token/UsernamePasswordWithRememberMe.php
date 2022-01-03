@@ -3,9 +3,16 @@
 namespace CRON\RememberMe\Security\Authentication\Token;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception;
+use Neos\Flow\Mvc\Exception\InvalidActionNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
+use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
+use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Utility\ObjectAccess;
 
 class UsernamePasswordWithRememberMe extends AbstractToken
@@ -34,9 +41,15 @@ class UsernamePasswordWithRememberMe extends AbstractToken
      * @return bool
      *
      * @throws InvalidAuthenticationStatusException
-     * @throws \Neos\Flow\Configuration\Exception
+     * @throws Exception
+     * @throws InvalidActionNameException
+     * @throws InvalidArgumentNameException
+     * @throws InvalidArgumentTypeException
+     * @throws InvalidControllerNameException
+     * @throws InvalidArgumentForHashGenerationException
+     * @throws InvalidHashException
      */
-    public function updateCredentials(ActionRequest $actionRequest)
+    public function updateCredentials(ActionRequest $actionRequest): bool
     {
         $httpRequest = $actionRequest->getHttpRequest();
         if ($httpRequest->getMethod() !== 'POST') {
@@ -47,16 +60,16 @@ class UsernamePasswordWithRememberMe extends AbstractToken
         if (!$referringRequest instanceof ActionRequest) {
             return false;
         }
-        $parentRequest = $referringRequest->getParentRequest();
-        if (!$parentRequest instanceof ActionRequest) {
+
+        $arguments = $referringRequest->getHttpRequest()->getParsedBody();
+
+        if (empty($arguments)) {
             return false;
         }
 
-        $arguments = $parentRequest->getArguments();
-
         foreach ($this->settings['loginFormFields'] as $loginFormFieldsSetting) {
             if (empty($loginFormFieldsSetting['username']) || empty($loginFormFieldsSetting['password'])) {
-                throw new \Neos\Flow\Configuration\Exception('You need to configure both username and password fields in every entry of CRON.RememberMe.loginFormFields');
+                throw new Exception('You need to configure both username and password fields in every entry of CRON.RememberMe.loginFormFields');
             }
 
             $username = trim(ObjectAccess::getPropertyPath($arguments, $loginFormFieldsSetting['username']));
