@@ -4,13 +4,10 @@ namespace CRON\RememberMe\Neos;
 
 use Neos\Flow\Annotations as Flow;
 use Firebase\JWT\JWT as JwtService;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -84,11 +81,11 @@ class AuthenticationEventsHandler
 
     /**
      * Inject the jwt cookie into the current http response if needed
-     * @param RequestInterface $request
+     * @param ActionRequest $request
      * @param ActionResponse $response
      * @param ControllerInterface $controller
      */
-    public function handleHTTPResponse(RequestInterface $request, ActionResponse $response, ControllerInterface $controller): void
+    public function handleHTTPResponse(ActionRequest $request, ActionResponse $response, ControllerInterface $controller): void
     {
         if ($this->jwtCookie !== null) {
             $response->setCookie($this->jwtCookie);
