@@ -5,6 +5,7 @@ namespace CRON\RememberMe\Security\Authentication\Token;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 
 /**
  * An authentication token used to fetch JWT credentials from a cookie
@@ -29,7 +30,7 @@ class RememberMe extends AbstractToken
     /**
      * @param ActionRequest $actionRequest The current action request
      * @return boolean
-     * @throws \Neos\Flow\Security\Exception\InvalidAuthenticationStatusException
+     * @throws InvalidAuthenticationStatusException
      */
     public function updateCredentials(ActionRequest $actionRequest)
     {

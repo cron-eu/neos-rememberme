@@ -2,6 +2,7 @@
 
 namespace CRON\RememberMe\Security\Authentication;
 
+use Exception;
 use Neos\Flow\Annotations as Flow;
 use CRON\RememberMe\Security\Authentication\Token\RememberMe;
 use Firebase\JWT\JWT as JwtService;
@@ -50,7 +51,7 @@ class RememberMeProvider extends AbstractProvider
      *
      * @return array
      */
-    public function getTokenClassNames()
+    public function getTokenClassNames(): array
     {
         return [RememberMe::class];
     }
@@ -61,6 +62,8 @@ class RememberMeProvider extends AbstractProvider
      *
      * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
+     * @throws InvalidArgumentForHashGenerationException
+     * @throws InvalidAuthenticationStatusException
      * @throws UnsupportedAuthenticationTokenException
      */
     public function authenticate(TokenInterface $authenticationToken)
@@ -76,6 +79,7 @@ class RememberMeProvider extends AbstractProvider
      * @param RememberMe $token
      * @throws InvalidArgumentForHashGenerationException
      * @throws InvalidAuthenticationStatusException
+     * @throws Exception
      */
     protected function authenticateRememberMeToken(RememberMe $token)
     {
@@ -86,10 +90,10 @@ class RememberMeProvider extends AbstractProvider
         }
         // Don't be surprised by the hard-coded "jwt". That is *not* the secret key of the JWT. HashService::generateHmac() uses the encryption key of this installation
         $jwtKey = $this->hashService->generateHmac('jwt');
-        $jwtPayload = null;
+
         try {
             $jwtPayload = (array)JwtService::decode($credentials['jwt'], $jwtKey, ['HS256']);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->throwableStorage->logThrowable($exception);
             $token->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
             return;
@@ -104,13 +108,13 @@ class RememberMeProvider extends AbstractProvider
         $account->setAuthenticationProviderName($this->name);
 
         if (empty($this->rememberMeAuthenticationProcessorClassName)) {
-            throw new \Exception('Setting CRON.RememberMe.rememberMeAuthenticationProcessorClassName is not set.');
+            throw new Exception('Setting CRON.RememberMe.rememberMeAuthenticationProcessorClassName is not set.');
         }
 
         $rememberMeAuthenticationProcessor = new $this->rememberMeAuthenticationProcessorClassName();
 
         if (!$rememberMeAuthenticationProcessor instanceof RememberMeAuthenticationProcessorInterface) {
-            throw new \Exception(sprintf('Class "%s" should implement RememberMeAuthenticationProcessorInterface but does not.', $this->rememberMeAuthenticationProcessorClassName));
+            throw new Exception(sprintf('Class "%s" should implement RememberMeAuthenticationProcessorInterface but does not.', $this->rememberMeAuthenticationProcessorClassName));
         }
 
         $rememberMeAuthenticationProcessor->process($account, $token, $jwtPayload);
