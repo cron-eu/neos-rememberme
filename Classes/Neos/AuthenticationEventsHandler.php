@@ -6,6 +6,7 @@ use Neos\Flow\Annotations as Flow;
 use Firebase\JWT\JWT as JwtService;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -87,7 +88,7 @@ class AuthenticationEventsHandler
      */
     public function handleHTTPResponse($request, $response, $controller): void
     {
-        if ($request instanceof ActionRequest && $this->jwtCookie !== null) {
+        if ($this->jwtCookie !== null && $response instanceof ActionResponse) {
             $response->setCookie($this->jwtCookie);
         }
     }

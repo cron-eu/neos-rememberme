@@ -41,7 +41,7 @@ class Package extends BasePackage
         );
 
         $dispatcher->connect(Dispatcher::class,
-            'afterControllerInvocation',
+            'beforeControllerInvocation',
             AuthenticationEventsHandler::class,
             'handleHTTPResponse'
         );
