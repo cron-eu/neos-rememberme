@@ -36,7 +36,9 @@ class RememberMe extends AbstractToken
     {
         $cookieParams = $actionRequest->getHttpRequest()->getCookieParams();
 
-        if (isset($cookieParams[$this->cookie['name']]) || empty($cookieParams[$this->cookie['name']])) {
+        $cookieValue = $cookieParams[$this->cookie['name']] ?? null;
+
+        if (empty($cookieValue)) {
             $this->setAuthenticationStatus(self::NO_CREDENTIALS_GIVEN);
             return false;
         }
@@ -45,7 +47,7 @@ class RememberMe extends AbstractToken
         // this will avoid re-authentication with every request.
         // Flow keeps this token with status AUTHENTICATION_SUCCESSFUL in the session after successful authentication.
         if ($this->getAuthenticationStatus() !== self::AUTHENTICATION_SUCCESSFUL) {
-            $this->credentials['jwt'] = $cookieParams[$this->cookie['name']];
+            $this->credentials['jwt'] = $cookieValue;
             $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
         }
     }
