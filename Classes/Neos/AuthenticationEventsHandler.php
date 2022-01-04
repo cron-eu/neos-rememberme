@@ -36,19 +36,26 @@ class AuthenticationEventsHandler
     protected $objectManager;
 
     /**
-     * jwt cookie to be send in the `handleHTTPResponse` hook
+     * jwt cookie to be sent in the `handleBeforeControllerInvocation` hook
      *
      * @var Cookie
      */
-    private $jwtCookie = null;
+    private $setJwtCookie = null;
+
+    /**
+     * jwt cookie to be sent in the `handleAfterControllerInvocation` hook
+     *
+     * @var Cookie
+     */
+    private $expireJwtCookie = null;
 
     /**
      * expire JWT cookie when the user logs out
      */
     public function loggedOut(): void
     {
-        $this->jwtCookie = new Cookie($this->cookie['name']);
-        $this->jwtCookie->expire();
+        $this->expireJwtCookie = new Cookie($this->cookie['name']);
+        $this->expireJwtCookie->expire();
     }
 
     /**
@@ -75,7 +82,7 @@ class AuthenticationEventsHandler
             // Don't be surprised by the hard-coded "jwt". That is *not* the secret key of the JWT. HashService::generateHmac() uses the encryption key of this installation
             $jwtKey = $this->hashService->generateHmac('jwt');
             $jwt = JwtService::encode($jwtPayload, $jwtKey, 'HS256');
-            $this->jwtCookie = new Cookie($this->cookie['name'], $jwt, $jwtExpiration);
+            $this->setJwtCookie = new Cookie($this->cookie['name'], $jwt, $jwtExpiration);
             // the cookie will be set via the `handleHTTPResponse` hook later on
         }
     }
@@ -86,10 +93,25 @@ class AuthenticationEventsHandler
      * @param mixed $response of type Neos\Flow\Mvc\ActionResponse when coming from a web request, but of type Neos\Flow\Cli\Response when coming from a command
      * @param mixed $controller of type Neos\Flow\Mvc\Controller\ControllerInterface when coming from a web request, but of type Neos\Flow\Command\ConfigurationCommandController when coming from a command
      */
-    public function handleHTTPResponse($request, $response, $controller): void
+    public function handleBeforeControllerInvocation($request, $response, $controller): void
     {
-        if ($this->jwtCookie !== null && $response instanceof ActionResponse) {
-            $response->setCookie($this->jwtCookie);
+        if ($this->setJwtCookie !== null && $this->expireJwtCookie == null && $response instanceof ActionResponse) {
+            $response->setCookie($this->setJwtCookie);
+            $this->setJwtCookie = null;
+        }
+    }
+
+    /**
+     * Inject the jwt cookie expiration into the current http response if needed
+     * @param mixed $request of type Neos\Flow\Mvc\ActionRequest when coming from a web request, but of type Neos\Flow\Cli\Request when coming from a command
+     * @param mixed $response of type Neos\Flow\Mvc\ActionResponse when coming from a web request, but of type Neos\Flow\Cli\Response when coming from a command
+     * @param mixed $controller of type Neos\Flow\Mvc\Controller\ControllerInterface when coming from a web request, but of type Neos\Flow\Command\ConfigurationCommandController when coming from a command
+     */
+    public function handleAfterControllerInvocation($request, $response, $controller): void
+    {
+        if ($this->expireJwtCookie !== null && $response instanceof ActionResponse) {
+            $response->setCookie($this->expireJwtCookie);
+            $this->expireJwtCookie = null;
         }
     }
 }
