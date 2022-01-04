@@ -5,14 +5,10 @@ namespace CRON\RememberMe;
 use Neos\Flow\Annotations as Flow;
 use CRON\RememberMe\Neos\AuthenticationEventsHandler;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
-use Neos\Flow\Security\Authentication\TokenInterface;
 
 class Package extends BasePackage
 {
@@ -45,10 +41,15 @@ class Package extends BasePackage
         );
 
         $dispatcher->connect(Dispatcher::class,
-            'afterControllerInvocation',
+            'beforeControllerInvocation',
             AuthenticationEventsHandler::class,
-            'handleHTTPResponse'
+            'handleBeforeControllerInvocation'
         );
 
+        $dispatcher->connect(Dispatcher::class,
+            'afterControllerInvocation',
+            AuthenticationEventsHandler::class,
+            'handleAfterControllerInvocation'
+        );
     }
 }

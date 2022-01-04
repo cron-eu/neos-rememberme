@@ -5,6 +5,7 @@ namespace CRON\RememberMe\Security\Authentication;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 
 class RememberMeAuthenticationProcessor implements RememberMeAuthenticationProcessorInterface
@@ -15,6 +16,9 @@ class RememberMeAuthenticationProcessor implements RememberMeAuthenticationProce
      */
     protected $policyService;
 
+    /**
+     * @throws NoSuchRoleException
+     */
     public function process(Account $account, TokenInterface $token, array $data): void
     {
         if (isset($data['accountRoleIdentifiers'])) {
