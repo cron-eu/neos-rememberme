@@ -5,7 +5,6 @@ namespace CRON\RememberMe\Neos;
 use Neos\Flow\Annotations as Flow;
 use Firebase\JWT\JWT as JwtService;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
