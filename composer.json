@@ -4,8 +4,8 @@
   "type": "neos-package",
   "license": "proprietary",
   "require": {
-    "neos/neos": "^5.0",
-    "neos/flow": "^6.0",
+    "neos/neos": "^5.0 || ^7.0",
+    "neos/flow": "^6.0 || ^7.0",
     "firebase/php-jwt": "^5.2"
   },
   "autoload": {
