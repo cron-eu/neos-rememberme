@@ -17,7 +17,7 @@ class RememberMe extends AbstractToken
      * @Flow\InjectConfiguration(path="cookie")
      * @var array
      */
-    protected $cookie;
+    protected array $cookie;
 
     /**
      * The jwt credentials

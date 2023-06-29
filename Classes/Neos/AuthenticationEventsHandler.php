@@ -20,33 +20,33 @@ class AuthenticationEventsHandler
      * @Flow\InjectConfiguration(path="cookie")
      * @var array
      */
-    protected $cookie;
+    protected array $cookie;
 
     /**
      * @Flow\Inject
      * @var HashService
      */
-    protected $hashService;
+    protected HashService $hashService;
 
     /**
      * @Flow\Inject
      * @var ObjectManagerInterface
      */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     /**
      * jwt cookie to be sent in the `handleBeforeControllerInvocation` hook
      *
-     * @var Cookie
+     * @var Cookie|null
      */
-    private $setJwtCookie = null;
+    private ?Cookie $setJwtCookie = null;
 
     /**
      * jwt cookie to be sent in the `handleAfterControllerInvocation` hook
      *
-     * @var Cookie
+     * @var Cookie|null
      */
-    private $expireJwtCookie = null;
+    private ?Cookie $expireJwtCookie = null;
 
     /**
      * expire JWT cookie when the user logs out

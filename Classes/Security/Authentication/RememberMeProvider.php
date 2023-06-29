@@ -20,22 +20,21 @@ use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
  */
 class RememberMeProvider extends AbstractProvider
 {
-
     /**
      * @Flow\Inject
      * @var HashService
      */
-    protected $hashService;
+    protected HashService $hashService;
 
     /**
      * @var ThrowableStorageInterface
      */
-    private $throwableStorage;
+    private ThrowableStorageInterface $throwableStorage;
 
     /**
      * @param ThrowableStorageInterface $throwableStorage
      */
-    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;
     }
@@ -44,7 +43,7 @@ class RememberMeProvider extends AbstractProvider
      * @Flow\InjectConfiguration(path="rememberMeAuthenticationProcessorClassName")
      * @var array
      */
-    protected $rememberMeAuthenticationProcessorClassName;
+    protected array $rememberMeAuthenticationProcessorClassName;
 
     /**
      * Returns the class names of the tokens this provider can authenticate.
@@ -81,7 +80,7 @@ class RememberMeProvider extends AbstractProvider
      * @throws InvalidAuthenticationStatusException
      * @throws Exception
      */
-    protected function authenticateRememberMeToken(RememberMe $token)
+    protected function authenticateRememberMeToken(RememberMe $token): void
     {
         $credentials = $token->getCredentials();
         if (!is_array($credentials) || !isset($credentials['jwt'])) {

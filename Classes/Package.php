@@ -16,7 +16,7 @@ class Package extends BasePackage
      * @Flow\Inject
      * @var ObjectManagerInterface
      */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     /**
      * @param Bootstrap $bootstrap The current bootstrap

@@ -14,11 +14,10 @@ use Neos\Flow\Security\RequestPatternInterface;
 
 class NeosRequestPattern implements RequestPatternInterface
 {
-
     /**
      * @var array
      */
-    protected $options;
+    protected array $options;
 
     /**
      * Expects options in the form array('matchFrontend' => TRUE/FALSE)

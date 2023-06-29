@@ -21,7 +21,7 @@ class UsernamePasswordWithRememberMe extends AbstractToken
      * @Flow\InjectConfiguration(package="CRON.RememberMe")
      * @var array
      */
-    protected $settings = [];
+    protected array $settings = [];
 
     /**
      * The username/password/rememberMe credentials
