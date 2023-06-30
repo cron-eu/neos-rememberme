@@ -41,9 +41,9 @@ class RememberMeProvider extends AbstractProvider
 
     /**
      * @Flow\InjectConfiguration(path="rememberMeAuthenticationProcessorClassName")
-     * @var array
+     * @var string
      */
-    protected array $rememberMeAuthenticationProcessorClassName;
+    protected string $rememberMeAuthenticationProcessorClassName;
 
     /**
      * Returns the class names of the tokens this provider can authenticate.
