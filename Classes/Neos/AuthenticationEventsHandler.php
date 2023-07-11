@@ -44,9 +44,9 @@ class AuthenticationEventsHandler
     /**
      * jwt cookie to be sent in the `handleAfterControllerInvocation` hook
      *
-     * @var Cookie|null
+     * @var Cookie
      */
-    private ?Cookie $expireJwtCookie = null;
+    private $expireJwtCookie = null;
 
     /**
      * expire JWT cookie when the user logs out
