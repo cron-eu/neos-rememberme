@@ -20,26 +20,26 @@ class AuthenticationEventsHandler
      * @Flow\InjectConfiguration(path="cookie")
      * @var array
      */
-    protected array $cookie;
+    protected $cookie;
 
     /**
      * @Flow\Inject
      * @var HashService
      */
-    protected HashService $hashService;
+    protected $hashService;
 
     /**
      * @Flow\Inject
      * @var ObjectManagerInterface
      */
-    protected ObjectManagerInterface $objectManager;
+    protected $objectManager;
 
     /**
      * jwt cookie to be sent in the `handleBeforeControllerInvocation` hook
      *
-     * @var Cookie|null
+     * @var Cookie
      */
-    private ?Cookie $setJwtCookie = null;
+    private $setJwtCookie = null;
 
     /**
      * jwt cookie to be sent in the `handleAfterControllerInvocation` hook

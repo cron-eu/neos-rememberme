@@ -17,7 +17,7 @@ class NeosRequestPattern implements RequestPatternInterface
     /**
      * @var array
      */
-    protected array $options;
+    protected $options;
 
     /**
      * Expects options in the form array('matchFrontend' => TRUE/FALSE)

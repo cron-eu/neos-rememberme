@@ -24,12 +24,12 @@ class RememberMeProvider extends AbstractProvider
      * @Flow\Inject
      * @var HashService
      */
-    protected HashService $hashService;
+    protected $hashService;
 
     /**
      * @var ThrowableStorageInterface
      */
-    private ThrowableStorageInterface $throwableStorage;
+    private $throwableStorage;
 
     /**
      * @param ThrowableStorageInterface $throwableStorage
@@ -43,7 +43,7 @@ class RememberMeProvider extends AbstractProvider
      * @Flow\InjectConfiguration(path="rememberMeAuthenticationProcessorClassName")
      * @var string
      */
-    protected string $rememberMeAuthenticationProcessorClassName;
+    protected $rememberMeAuthenticationProcessorClassName;
 
     /**
      * Returns the class names of the tokens this provider can authenticate.

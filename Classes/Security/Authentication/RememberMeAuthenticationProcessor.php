@@ -16,7 +16,7 @@ class RememberMeAuthenticationProcessor implements RememberMeAuthenticationProce
      * @Flow\Inject
      * @var PolicyService
      */
-    protected PolicyService $policyService;
+    protected $policyService;
 
     /**
      * @param Account $account
