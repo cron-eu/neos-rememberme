@@ -9,12 +9,10 @@ declare(strict_types=1);
 namespace CRON\RememberMe\Security\Authentication;
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Security\RequestPatternInterface;
 
 class NeosRequestPattern implements RequestPatternInterface
 {
-
     /**
      * @var array
      */

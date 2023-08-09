@@ -12,7 +12,6 @@ use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
  */
 class RememberMe extends AbstractToken
 {
-
     /**
      * @Flow\InjectConfiguration(path="cookie")
      * @var array
